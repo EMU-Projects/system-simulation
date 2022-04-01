@@ -4,8 +4,8 @@
 double uniform(double a, double b);
 int geometric(double p) {
 	double q = 1 - p;
-	double u{uniform(0,1)};
-	return int(log(u)/log(q)) + 1;
+	double u{ uniform(0,1) };
+	return int(log(u) / log(q)) + 1;
 }
 int binomial(int n, double p) {
 	double u{ uniform(0,1) };
@@ -16,7 +16,7 @@ int binomial(int n, double p) {
 	while (true) {
 		if (u < F)
 			break;
-		Pi = (c*(n-i)/(i+1))*Pi;
+		Pi = (c * (n - i) / (i + 1)) * Pi;
 		F += Pi;
 		i++;
 	}
@@ -25,10 +25,10 @@ int binomial(int n, double p) {
 int poisson(double lambda) {
 	double u{ uniform(0,1) };
 	double p{ exp(-lambda) };
-	double F{p};
-	
+	double F{ p };
+
 	int i = 0;
-	while(true) {
+	while (true) {
 		if (u < F)
 			break;
 		p = (lambda * p) / (i + 1);
@@ -40,12 +40,12 @@ int poisson(double lambda) {
 
 // Generate a random number between two numbers
 double uniform(double a, double b) {
-	return (double(rand()) / RAND_MAX) * (b-a) + a;
+	return (double(rand()) / RAND_MAX) * (b - a) + a;
 }
 
 /*
 * Generate a random number using Exponential distribution
-* 
+*
 */
 double exponential(double lambda) {
 	double u{ uniform(0,1) };
@@ -54,7 +54,7 @@ double exponential(double lambda) {
 
 /*
 * Generate a random number using Normal distribution
-* 
+*
 */
 double normal(double mean, double std) {
 	double u1{ uniform(0, 1) }, u2{ uniform(0, 1) };
@@ -65,5 +65,5 @@ double normal(double mean, double std) {
 	double y = r * sinf(theta);
 
 	// random number = stdev * X + mean
-	return std*x+mean;
+	return std * x + mean;
 }
