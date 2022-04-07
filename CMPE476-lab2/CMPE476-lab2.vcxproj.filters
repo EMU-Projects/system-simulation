@@ -28,7 +28,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="CMPE476-lab2.rc">
+    <ResourceCompile Include="System-Simulation.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
