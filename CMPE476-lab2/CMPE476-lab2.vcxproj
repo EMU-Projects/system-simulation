@@ -141,11 +141,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Source.cpp" />
+    <ClCompile Include="Lab2.cpp" />
+    <ClCompile Include="Lab3.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lab1.h" />
     <ClInclude Include="lab2.h" />
+    <ClInclude Include="lab3.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="System-Simulation.rc" />

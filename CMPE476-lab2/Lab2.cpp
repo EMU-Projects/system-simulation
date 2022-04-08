@@ -1,4 +1,4 @@
-#include <stdio.h>
+/*#include <stdio.h>
 #include <Windows.h>
 #include <iostream>
 //#include "lab1.h"
@@ -19,7 +19,7 @@ void print_info(double data[], int bins[], char* name) {
 	std::cout << "The standard deviation is: " << stdev(data, M, avg) << "\n\n";
 }
 
-int main() {
+int main_x() {
 
 	COORD ScreenBufferSize{ 1500, 300 };
 	HANDLE ConsoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -63,3 +63,4 @@ int main() {
 
 	return 0;
 }
+*/

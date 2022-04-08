@@ -104,17 +104,14 @@ void print_correlation(char* filename, char* setname) {
 	free(data1); free(data2); fclose(file);
 }
 
-double function(double x) {
-	return exp(-x * x);
-}
-double mc_integral(double lower_bound, double upper_bound, int iterations) {
+double mc_integral(double lower_bound, double upper_bound, int iterations, double (*f)(double)) {
 	double sum = 0;
 
 	int i = 0;
 	while (i < iterations - 1)
 	{
 		double random = lower_bound + (double(rand()) / RAND_MAX) * (upper_bound - lower_bound);
-		double value = function(random);
+		double value = (*f)(random);
 		sum += value;
 		i++;
 	}
