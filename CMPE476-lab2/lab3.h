@@ -41,43 +41,42 @@ double phi_z(double z) {
 
 /*
 * Monte Carlo Simulation of Binary Transmission over a Gaussian Channel
-* 
+*
 * Noise is distributed as normal( 0 , sigma^2 )
-* 
+*
 * i  <- Discrete time
 * Yi <- Received signal
 * Xi <- RV denoting transmitted signal
 * Zi <- Noise == normal( 0 , sigma^2 )
-* 
+*
 * Receiver detects "0" if Y <= 0
 * Receiver detects "1" if Y > 0
-* 
+*
 * We provide SNR (Signal to noise ratio)
-* 
+*
 * Noise power sigma^2 = 0.25 (ex.)
-* 
+*
 * SNR = P / (sigma^2) -> 10log( P / (sigma^2) ) in dB
-* 
+*
 * parameters ( SNR(dB) , )
-* 
+*
 */
 
-void binary_channel_error_sim(double sigma_sqr, int no_bits) {
-	double P = 3;
+void binary_channel_error_sim(double P, double sigma_sqr, int no_bits, double* capacity) {
 	double sqrt_P = sqrt(P);
 	double SNR_DB = 10 * log10(P / sigma_sqr);
 	int correct = 0;
 	for (int i = 0; i < no_bits; i++) {
 		// X == sqrt_P is "1", X == -sqrt_P is "0"
 		double X = round(uniform(0, 1)) ? sqrt_P : -sqrt_P;
-		double Z = normal(0, sigma_sqr);
+		double Z = normal(0, sqrt(sigma_sqr));
 		double Y = X + Z;
 		// if Y is "1"
 		if (Y > 0) {
 			if (X == sqrt_P) correct++;
 		}
 		// if Y is "0"
-		else{
+		else {
 			if (X == -sqrt_P) correct++;
 		}
 	}
@@ -85,15 +84,17 @@ void binary_channel_error_sim(double sigma_sqr, int no_bits) {
 	double e = double(incorrect) / no_bits;
 
 	double e_theoretical = 1 - phi_z(sqrt_P / sqrt(sigma_sqr));
-	double bin_entropy = -e*log2(e) - (1 - e) *log2(1 - e);
-	double capacity = 1 - bin_entropy;
+	double bin_entropy = 0;
+	if (e != 0)
+		bin_entropy = -e * log2(e) - (1 - e) * log2(1 - e);
+	*capacity = 1 - bin_entropy;
 	std::cout << "SNR in dB: " << SNR_DB << std::endl;
 	std::cout << "Total no. of bits: " << no_bits << std::endl;
 	std::cout << "Total no. of correct bits: " << correct << std::endl;
 	std::cout << "Total no. of incorrect bits: " << incorrect << std::endl;
 	std::cout << "Rate of failure ('e' estimate): " << e << std::endl;
 	std::cout << "Probability 'e' theoretical: " << e_theoretical << std::endl;
-	std::cout << "Capacity: " << capacity << std::endl;
+	std::cout << "Capacity: " << *capacity << std::endl;
 
 
 }
