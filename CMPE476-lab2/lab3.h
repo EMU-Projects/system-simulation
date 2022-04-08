@@ -35,6 +35,8 @@ double phi_z(double z) {
 	double p = 0.2316419;
 	double t = 1 / (1 + p * z);
 	double r = t * (c1 + t * (c2 + t * (c3 + t * (c4 + t * c5))));
+	if (z < 0)
+		return 1 - phi_z(-z);
 	return 1 - r * exp(-(z * z) / 2);
 }
 

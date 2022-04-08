@@ -20,8 +20,9 @@ void main() {
 		printf("Test no. %d\n\n", iter++);
 		binary_channel_error_sim(P, s_sqr, no_bits, capacity);
 		printf("\n\n\n");
-		fprintf(file, "%lf %lf\n",P,capacity);
+		fprintf(file, "%d %lf\n",i,capacity);
 	}
 	fclose(file);
-
+	system("pip install matplotlib");
+	system("python plot.py");
 }
