@@ -7,14 +7,21 @@ void main() {
 	srand(time(0));
 	double P, s_sqr;
 	int no_bits;
-	printf("Enter the signal power for 1's and 0's: ");
-	scanf("%lf", &P);
 	printf("Enter Variance: ");
 	scanf("%lf", &s_sqr);
 	printf("Enter the no of bits to test: ");
 	scanf("%d", &no_bits);
-	double* capacity = 0;
-	binary_channel_error_sim(P, s_sqr, no_bits, capacity);
-	//printf("Integration: %lf", phi_z(3));
+	// The varying parameter would be power for SNR
+	FILE* file = fopen("output.dat", "w");
+	double capacity = 0;
+	int iter = 1;
+	for (int i = -20; i <= 20; i++) {
+		P = s_sqr * pow(10, i / 10.0);
+		printf("Test no. %d\n\n", iter++);
+		binary_channel_error_sim(P, s_sqr, no_bits, capacity);
+		printf("\n\n\n");
+		fprintf(file, "%lf %lf\n",P,capacity);
+	}
+	fclose(file);
 
 }

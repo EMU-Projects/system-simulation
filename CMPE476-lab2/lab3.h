@@ -62,7 +62,7 @@ double phi_z(double z) {
 *
 */
 
-void binary_channel_error_sim(double P, double sigma_sqr, int no_bits, double* capacity) {
+void binary_channel_error_sim(double P, double sigma_sqr, int no_bits, double &capacity) {
 	double sqrt_P = sqrt(P);
 	double SNR_DB = 10 * log10(P / sigma_sqr);
 	int correct = 0;
@@ -87,14 +87,14 @@ void binary_channel_error_sim(double P, double sigma_sqr, int no_bits, double* c
 	double bin_entropy = 0;
 	if (e != 0)
 		bin_entropy = -e * log2(e) - (1 - e) * log2(1 - e);
-	*capacity = 1 - bin_entropy;
+	capacity = 1 - bin_entropy;
 	std::cout << "SNR in dB: " << SNR_DB << std::endl;
 	std::cout << "Total no. of bits: " << no_bits << std::endl;
 	std::cout << "Total no. of correct bits: " << correct << std::endl;
 	std::cout << "Total no. of incorrect bits: " << incorrect << std::endl;
 	std::cout << "Rate of failure ('e' estimate): " << e << std::endl;
 	std::cout << "Probability 'e' theoretical: " << e_theoretical << std::endl;
-	std::cout << "Capacity: " << *capacity << std::endl;
+	std::cout << "Capacity: " << capacity << std::endl;
 
 
 }
