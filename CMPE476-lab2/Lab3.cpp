@@ -1,3 +1,4 @@
+/*
 #include <stdio.h>
 #include <Windows.h>
 #include <iostream>
@@ -26,3 +27,4 @@ void main() {
 	system("pip install matplotlib");
 	system("python plot.py");
 }
+*/
