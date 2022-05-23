@@ -12,6 +12,13 @@ typedef struct Packet {
 	double time_ended;
 };
 
+
+/*
+* 
+* The code is built with C++ libraries such as iostream, queue
+* 
+*/
+
 // Since it is first come first serve
 // 
 // waiting_time = time_started - time_arrived
@@ -28,7 +35,7 @@ void main() {
 	 *
 	 */
 
-	// Total simulation time 5,000 seconds = 5,000,000 ms;
+	 // Total simulation time 5,000 seconds = 5,000,000 ms;
 	double total_time = 5000000;
 
 	// lambda = 1/mean
@@ -36,67 +43,81 @@ void main() {
 
 	/* utilization level U.
 	 * Total_time x U =
-	 * 
-	 * 
+	 *
+	 *
 	 */
-	double utilization = 0.05;
+	double utilization = 0.95;
 
 
-	// value of queue is packet sizes
-	queue<Packet*> packets;
+	// list containing all packets to be processed
+	vector<Packet*> packets;
 
-	double last_time = 0;
-	while (last_time < total_time) {
-		double inter_arrival = 1000*exponential(utilization);
-		//cout << "Time: " << last_time << "\n";
+	double arrival_time = 0;
+	while (arrival_time < total_time) {
 		float packet_size = (float)exponential(lambda);
 		Packet* packet = new Packet;
 		packet->bits_remaining = packet_size;
-		packet->time_arrived = last_time;
+		packet->time_arrived = arrival_time;
 		packet->time_started = NULL;
 		packet->time_ended = NULL;
-		packets.push(packet);
-		last_time += inter_arrival;
+		packets.push_back(packet);
+		arrival_time += long(1000*exponential(utilization));
 	}
 
-	double total_idle = 0;
-	double total_wait = 0;
-	double total_process = 0;
+	double total_idle = 0; // total time the simulation is doing nothing
+	double total_wait = 0; // total time of waiting between arrival of packets and the start of processing them
+	double total_process = 0; // total time of processing the packet = finish - start
 
-	double last_leave = 0;
+	// iterator number to keep track of the latest packet that was added to the queue
+	int iter_id = 0;
+
+	// queue containing currently waiting packets to be served
+	queue<Packet*> queue;
+
+	// packet count per millisecond
+	double packet_count = 0;
+
 	// Simulation per millisecond loop
-	for (int i = 0; i < total_time && packets.size(); i++) {
+	for (double t = 0; iter_id < packets.size(); t++) {
+		// t is the current time in ms in our simulation
 		// 10,000 bits per second = 10 bits per millisecond
-		float no_bits = 10;
-		Packet* current = packets.front();
-		if (current->time_arrived > i) {
-			// do nothing wait
+		const float no_bits_to_subtract = 10;
+
+		while (iter_id < packets.size() && packets[iter_id]->time_arrived <= t) {
+			queue.push(packets[iter_id]);
+			iter_id++;
+		}
+
+		packet_count += queue.size();
+		if (queue.size() == 0) {
+			// do nothing
+			total_idle++;
 			continue;
 		}
+
+		Packet* current = queue.front();
 		if (current->time_started == NULL) {
-			current->time_started = i;
-			total_wait += i - current->time_arrived;
-			total_idle += i - last_leave;
+			current->time_started = t;
+			total_wait += t - current->time_arrived;
 		}
-		if (no_bits > current->bits_remaining) {
+		if (no_bits_to_subtract > current->bits_remaining) {
 			current->bits_remaining = 0;
-			current->time_ended = i;
-			total_process += current->time_ended - current->time_arrived;
-			last_leave = i;
-			packets.pop();
+			current->time_ended = t;
+			total_process += t - current->time_started;
+			queue.pop();
 			continue;
 		}
-		current->bits_remaining -= no_bits;
-		
+		current->bits_remaining -= no_bits_to_subtract;
+
 	}
+	double entire_time = total_idle + total_process;
 
-	total_time = (total_wait + total_process + total_idle);
-
-	cout << "Total idle: " << total_idle / 1000 << " seconds" << "\n";
-	cout << "Total wait: " <<  total_wait / 1000 << " seconds" << "\n";
-	cout << "Total process: " << total_process / 1000 << " seconds" << "\n";
-	cout << "Total (wait + idle + process): " <<  total_time / 1000 << " seconds" << "\n"; // total time to finish off processing everything
-	cout << "Average packet delay: " << total_wait / total_time << " seconds" << "\n";
-
+	std::cout << "Total idle: " << total_idle / 1000 << " seconds" << "\n";
+	std::cout << "Total wait: " << total_wait / 1000 << " seconds" << "\n";
+	std::cout << "Total process: " << total_process / 1000 << " seconds" << "\n";
+	std::cout << "Total time: " << entire_time / 1000 << " seconds" << "\n";
+	std::cout << "Average packet delay: " << total_wait / packets.size() << " seconds" << "\n";
+	std::cout << "Average no. of packets: " << packet_count / entire_time << " packets" << "\n";
+	std::cout << "Total no. of packets: " << packets.size() << " packets" << "\n";
 
 }
