@@ -1,0 +1,4 @@
+﻿  LAB5.cpp
+C:\Users\PCLAB137\Desktop\LAB\VS solution\LAB5\LAB5\LAB5.cpp(6,24): warning C4091: 'typedef ': ignored on left of 'Frame' when no variable is declared
+C:\Users\PCLAB137\Desktop\LAB\VS solution\LAB5\LAB5\LAB5.cpp(15,15): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+  LAB5.vcxproj -> C:\Users\PCLAB137\Desktop\LAB\VS solution\LAB5\Debug\LAB5.exe
