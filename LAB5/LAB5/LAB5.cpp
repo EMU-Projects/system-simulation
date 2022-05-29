@@ -1,9 +1,6 @@
 #include <iostream>
-#include <vector>
-#include <queue>
 #define SLOTS 10000
 
-typedef struct Frame {};
 
 double random(double a, double b) {
     return (b - a) * (rand() / double(RAND_MAX)) + a;
@@ -15,7 +12,7 @@ int main()
     srand(time(0));
     // USING --- SLOTTED ALOHA --- (PROTOCOL)
 
-    for (int k = 0; k < 10; k++){
+    for (int k = 0; k < 9; k++){
         // Length of bits (200-bit) frame
         const int L = 200;
 
@@ -29,42 +26,59 @@ int main()
         const int N = 50;
 
         // Probability of transmitting a frame. (We always have a frame to transmit)
-        const double p = 1.0 / N;
+        // For k < 3 try p = 1/N
+        // for k < 6 try p = 1/2*N
+        // for the last 3 tries p = 2/N
+        const double p = k < 3 ? (1.0 / N) : k < 6 ? (1.0 / (2*N)): (2.0/N);
 
+        // Total no. of collisions that happened throughout the simulation
         int collisions = 0;
-        std::queue<Frame*> frames;
+        
+        // No. of frames
+        int frames = 0;
+
+        // Maximum efficiency -> e = G * e^(-G)
+        // For G is the no. of nodes that were sending a frame per time slot
         double max_efficiency = 0;
+
         for (int i = 0; i < SLOTS; i++) {
-            std::queue<Frame*> temp;
+            
+            // No. of nodes that that are sending a frame
+            int nodes_sending = 0;
+            
             for (int j = 0; j < N; j++) {
+                // Checking the probability of sending a frame per node
                 if (random(0, 1) <= p) {
-                    Frame* frame;
-                    temp.push(frame);
+                    nodes_sending++;
                 }
 
             }
-            double efficiency = temp.size()* exp(-int(temp.size()));
+
+            // calculating efficiency with maximum algorithm
+            double efficiency = nodes_sending* exp(-int(nodes_sending));
             if (efficiency > max_efficiency) max_efficiency = efficiency;
-            if (temp.size() > 1) {
+
+            // If more than 1 node is sending -> collision happens
+            if (nodes_sending > 1) {
                 collisions++;
-                temp.pop();
-                while (temp.size() > 0) {
-                    frames.push(temp.front());
-                    temp.pop();
-                }
+                frames += nodes_sending;
             }
-            else if (temp.size() == 0 && frames.size() > 0) {
-                frames.pop();
+
+            // If there is a slot with no nodes sending a frame, send previous frames
+            // i.e subtract the number of frames that are queueing to be sent from previous collisions 
+            else if (nodes_sending == 0 && frames > 0) {
+                frames--;
             }
 
         }
 
         // Maximum efficiency according to protocol should be 3.68
-        std::cout << "No. of collisions: " << collisions << "\n";
-        std::cout << "Rate of collision: " << double(collisions) / SLOTS << "\n";
-        std::cout << "Maximum efficiency: " << max_efficiency << "\n";
-        std::cout << "Frames left: " << frames.size() << "\n";
-        std::cout << "\n\n";
+        std::cout << "Probability: " << p << std::endl;
+        std::cout << "No. of collisions: " << collisions << std::endl;
+        std::cout << "Rate of collision: " << double(collisions) / SLOTS << std::endl;
+        std::cout << "Maximum efficiency: " << max_efficiency << std::endl;
+        std::cout << "Frames left: " << frames << std::endl;
+        std::cout << std::endl << std::endl;
     }
     return 0;
 }
